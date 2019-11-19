@@ -1,6 +1,8 @@
 package com.xbrainz.retrofit;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -19,11 +21,15 @@ public class MainActivity extends AppCompatActivity {
     private String base_url = "https://jsonplaceholder.typicode.com/";
     private String TAG = "Main";
 
+    private RecycleAdapter recycleAdapter;
+    private RecyclerView recyclerView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        recyclerView = findViewById(R.id.recycle);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(base_url)
@@ -37,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
         listCall.enqueue(new Callback<List<ApiModel>>() {
             @Override
             public void onResponse(Call<List<ApiModel>> call, Response<List<ApiModel>> response) {
+
+                recycleAdapter = new RecycleAdapter(MainActivity.this,response.body());
+                recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                recyclerView.setAdapter(recycleAdapter);
                 Log.d("response",response.body().toString());
                 Toast.makeText(getApplicationContext(),response.body().get(0).getBody(),Toast.LENGTH_SHORT).show();
             }
